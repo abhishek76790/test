@@ -1,0 +1,89 @@
+1.	what is the difference between terraform count and for_each meta data function? and give a scenario-based example to use them?
+
+Terraform count defines the number of resources of the same resource or module block to be spinned up as a exact replica of the resource with consecutive resource names. By default , if you do not specify the count parameter on any resource or module block , terraform spins only one resource of that block.
+
+Example :
+resource "google_bigquery_dataset" "example" {
+  count = 3
+  dataset_id  = "neo.${count.index}"
+}
+
+Terraform for_each block loops over the list, map or either a set of arguments to spin up multiple copies of an entire resource block or module block. Suppose if you have a map of users or service account and you need to add IAM policy to those users, rather than creating multiple blocks of code we could just use a map variable and loop inside the module block. Terraform plan would show the key and the value for multiple modules accordingly. 
+
+Example:
+locals {
+ dataset_config = {
+   "dataset1" = "EU",
+   "dataset2" = "us-central1,
+   "dataset3" = "us-east4" }
+ }
+}
+resource "google_bigquery_dataset" "example" {
+  for_each   = local.dataset_config
+  dataset_id  = each.key
+  location = each.value
+
+}
+(
+
+2.	What is Terraform taint ? When to use it? When would you use terraform state rm vs terraform taint?
+When you want a particular resource to be re created by terraform due to some manual changes that might have been occured at the resource and resource is not working as expected, in such scenario we use terraform taint command to mark that resource to be recreated at the next apply with thae same configurations in the module.
+
+example: terraform taint google_bigquery_dataset.example
+
+As of terraform latest version , this command has been depricated its recommended to use the -replace option.
+
+terraform state rm <moudle_uri> removes that configurations of a particular module from state file so that terraform doesnt manage the resource anymore.
+taint usually tells terraform to recreate a particular resource in next apply if there are any misconfigurations on the actual resource. it doesnt remove the configuartions from state file.
+
+3.	How would you show a diagram of all terraform resources in the state file? When is this useful? 
+
+terraform graph commands shows you a diagram of all the reorurces of the current state.
+Its useful in scenario , if you want to view the current state of all your reources across environments.
+
+4.	Solve this expression: 
+count = var.run_remote_environment ? var.TFC_RUN_ID !=["Yes"]) : null
+
+
+Set the count value equal to run_remote_variable if TFC_RUN_ID variable is not equal yes(boolean condition false) if it is equal to yes set count is equal to none.
+
+
+5.	How would you apply terraform to multiple accounts simultaneously? We want to ensure this follows secuirty best practices. 
+
+If you have two accounts one is Aws and one in GCP and want to  create resources in both simultaneously then you can define multiple providers in the providers file and then define the provider in the resource block as well.
+
+provider aws {
+region = var.region
+}
+
+provider "google" {
+  project     = "my-project-id"
+  region      = "us-central1"
+}
+
+If you would like to create resources simultaneously to two AWS accounts, you can make use of provider aliases. Create a providers file and put the providers name in it.
+
+provider aws {
+ region = var.region
+}
+
+provider aws {
+ alias = "aws_02"
+ region = var.region
+ profile = "aws_profile" #this shoulds be same name of profile as in AWS crdential file.
+}
+refrencing the provider in resource blocks
+
+resource "aws_instance" "server" {
+  provider = "aws"
+}
+
+resource "aws_instance" "server" {
+  provider = "aws.aws_02"
+}
+
+
+
+
+
+

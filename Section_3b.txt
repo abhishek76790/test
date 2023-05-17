@@ -1,0 +1,37 @@
+1.	What are different network connectivity options to connect from On-prem or another cloud to GCP ?
+
+* Cloud VPN - HA and Classic VPN
+* Cloud Interconnect -  
+        * Dedicated Interconnect - Its a direct physical connection between your on-premises network and Google's network near to google coloctaion facility
+        * Partner Interconnect - provides connectivity between your on-premises and VPC networks through a supported service provider.
+
+
+2.	Where & how the FW rules are managed in GCP when using shared VPC architecture ?
+
+When using a shared VPC architecture where there is one host project and multiple service projects , all the networking configurations are done in the host project hence the firewalls are setup in the host project where VPC is created.
+
+
+3.	How do you connect to GKE cluster from GCP cloudshell ?
+
+GKE cluster has two end points one public and private , if you are using a public GKE cluster we are able to connect to the GKE control plane via the public end point using gcloud command :
+gcloud container clusters get-credentials <cluster-name> --project <project-name>
+
+As soon as we are authenticated via the API, we can run kubectl commands.
+
+In case of private cluster , the public endpoint is disabled and if we want to connect from anoutside source we need to add master authorized ip in the cluster configurations . Since cloud shell is running on the internet we wont be able to whitelist an epiphermal IP. hence we wont able to connect.
+
+
+4.	How is GCP VPC networking is different than AWS VPC networking ?
+
+VPS's in google are global , we can create mutiple regional subnets into it. Whereas in AWS the VPC is a regional resource.
+Subnets are zonal in AWS Whereas in GCP the subnets are regional
+
+
+5.	Explain high level steps to create a service project in GCP org with Shared VPC enabled ? 
+
+Step 1 : Grant a user/group Shared VPC Admin and Project IAM Admin roles at an organization level/folder level
+Step 2 : In the console go to shared VPC page and enable the host project from the list of projects cureently active.
+Step 3 : Click on Set up Shared VPC > Select subnets > Share all subnets or individul subnets depending upon the requirement 
+Step 4 : In Attached projects tab , select the projects which you want to act as a service projects.
+Step 5 : Select IAM users and grant service project admins so they can able to use the subnets in service projects.
+

@@ -1,0 +1,45 @@
+1.	If you use git stash, where will it save data? What is diff b/w index and staging area?
+
+Git stash termporary stores your uncommited changes from your working directory , so that you can work on something else and later if you need those changes you can use git stash pop command to bring back those changes. it stores all the changes in the staging area.
+
+The Git index is a critical data structure in Git. It serves as the “staging area” between the files you have on your filesystem and your commit history.
+When you run git add, the files from your working directory are hashed and stored as objects in the index, leading them to be “staged changes”.
+When you run git commit, the staged changes as stored in the index are used to create that new commit.
+staging area is basically where git adds file from your working directory to this area to track those changes for commit.
+
+
+2.	When would individuals use git rebase, git fast-forward, or a git fetch then push?  
+
+
+Git rebase is the process of moving or combining a sequence of commits to a new base commit.for example if you have 2 commits in master branch and 3 commits in test branch, it will be merged in a linear manner, you can rebase any of the branches.
+consider a situation where the main branch has progressed since you started working on a feature branch. You want to get the latest updates to the main branch in your feature branch, but you want to keep your branch's history clean. in this case we use git rebase
+rebasing is changing the base of your branch from one commit to another making it appear as if you'd created your branch from a different commit
+
+If two branches have not diverged  and there is a direct linear path from source branch to target branch , git runs a fast forward merge, I have a feature branch and master branch and currently they are pointing to same commit , If I switch to feature branch and do some commits and need bring changes to master branch, it’s a linear path, all git has to do is to change the pointer of master forward. This is where we use git fast-forward merge.
+
+Git fetch is used to update local repository with latest commit from remote origin, it updates latest commits changes in repo but doesn’t merge with the current head commit id. 
+git push is used to update your local changes to remote GIT repository.
+
+
+
+3.	How to revert already pushed changes?
+Get the commit id of a particular branch by running git log command
+then to undo the commit run git revert [commit id] , it will remove changes associated with this hash id only. It would create a commit with the reverse patch to cancel it out
+
+
+
+
+4.	What is the difference between cherry picking commits vs trying a hard reset. What is the outcome of the head reference? 
+Git Cherry picking allows you to pick commit from one branch and apply it to another branch. there are certain scenario when git cherry pick can be used For example : If you have discovered a bug in your code and simultaneously other developers are working on new features of the application code. in his case to apply a hotfix you could pick that commit and directly merge to the master branch.
+
+
+If we use git reset –-hard [commit hash] when using the hard reset on a specific commit, it forces the HEAD to get back to that commit and deletes everything on the working repository after that point. The --hard option is typically used when a local commit has gone wrong, and we simply want a fresh start from a previous committed state, git reset is similar to git revert, but approach is slightly different, instead of removing all the commits in its way, the revert ONLY undoes a single commit by taking you back to the staged files before the commit.
+
+The outcome of HEAD reference commit Id in case of git cherry pick would be no changes as we are not committing any changes while doing cherry pick hence head would remain the same if you are using –no-commit option.
+In case of git reset , the head would change to the hash ID of the commit specified while running the command.
+
+
+5.	Explain the difference between git remote and git clone?
+Git clone is used to create a copy of remote git repo on your local system ex git clone <repository_URL>, it will clone the repo from mentioned URL into a new directory where you run this command with the same name as remote repo.
+Git remote command is used to manage remote repository, which is associated with your local repo, allowing you to view, add, rename and remove remote repo.
+example : git remote add origin <link>: this command adds  a new remote to the GIT repository
